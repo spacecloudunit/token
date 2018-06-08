@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
 // ----------------------------------------------------------------------------
-// 'SCT' 'Space.Cloud.Unit Token' token contract
+// 'SCU' 'Space.Cloud.Unit Token' token contract
 //
 // Symbol      : SCU
 // Name        : Space.Cloud.Unit
