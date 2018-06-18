@@ -21,7 +21,7 @@ import "../openzepplin/contracts/token/ERC20/BurnableToken.sol";
 
 contract SCU is StandardToken, DetailedERC20, Ownable, PausableToken, CappedToken, BurnableToken {
     constructor() public {
-        // DetailedERC20
+        // DetailedERC20:
         symbol = "SCU";
         name = "Space.Cloud.Unit";
         decimals = 18;
