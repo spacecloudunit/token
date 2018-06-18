@@ -14,6 +14,7 @@ pragma solidity ^0.4.24;
 
 import "../openzepplin/contracts/math/SafeMath.sol";
 import "../openzepplin/contracts/ownership/Ownable.sol";
+import "../openzepplin/contracts/token/ERC20/DetailedERC20.sol";
 import "../openzepplin/contracts/token/ERC20/PausableToken.sol";
 import "../openzepplin/contracts/token/ERC20/CappedToken.sol";
 import "../openzepplin/contracts/token/ERC20/BurnableToken.sol";
@@ -22,11 +23,7 @@ import "../openzepplin/contracts/token/ERC20/BurnableToken.sol";
 // ERC20 Token, with the addition of symbol, name and decimals and an
 // initial fixed supply
 // ----------------------------------------------------------------------------
-contract SCU is Ownable, PausableToken, CappedToken, BurnableToken {
-
-    string public symbol;
-    string public name;
-    uint8 public decimals;
+contract SCU is DetailedERC20, Ownable, PausableToken, CappedToken, BurnableToken {
 
     // ------------------------------------------------------------------------
     // Constructor
