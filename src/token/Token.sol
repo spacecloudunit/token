@@ -19,14 +19,17 @@ import "../openzepplin/contracts/token/ERC20/PausableToken.sol";
 import "../openzepplin/contracts/token/ERC20/CappedToken.sol";
 import "../openzepplin/contracts/token/ERC20/BurnableToken.sol";
 
-contract SCU is DetailedERC20, Ownable, PausableToken, CappedToken, BurnableToken {
+contract SCU is StandardToken, DetailedERC20, Ownable, PausableToken, CappedToken, BurnableToken {
     constructor() public {
+        // DetailedERC20
         symbol = "SCU";
         name = "Space.Cloud.Unit";
         decimals = 18;
-        _totalSupply = 150000000 * 10**uint(decimals);
-        balances[owner] = _totalSupply;
-        // Set: CappedToken.cap
+        // BasicToken:
+        totalSupply_ = 150000000 * 10**uint(decimals);
+        // StandardToken:
+        balances[owner] = totalSupply_;
+        // CappedToken:
         cap = _totalSupply;
         emit Transfer(address(0), owner, _totalSupply);
     }

@@ -11,7 +11,7 @@ import "./ERC20.sol";
  * https://github.com/ethereum/EIPs/issues/20
  * Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
  */
-contract s is ERC20, BasicToken {
+contract StandardToken is ERC20, BasicToken {
 
   mapping (address => mapping (address => uint256)) internal allowed;
 
