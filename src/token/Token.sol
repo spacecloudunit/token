@@ -8,135 +8,25 @@ pragma solidity ^0.4.24;
 // Total supply: 150,000,000.000000000000000000
 // Decimals    : 18
 //
-// (c) BokkyPooBah / Bok Consulting Pty Ltd 2017. The MIT Licence.
 // (c) openzepplin / Smart Contract Solutions, Inc 2016. The MIT Licence.
 // (c) Max / SCU GmbH 2018. The MIT Licence.
 // ----------------------------------------------------------------------------
 
-
-// ----------------------------------------------------------------------------
-// Safe maths
-// ----------------------------------------------------------------------------
-library SafeMath {
-    function add(uint a, uint b) internal pure returns (uint c) {
-        c = a + b;
-        require(c >= a);
-    }
-    function sub(uint a, uint b) internal pure returns (uint c) {
-        require(b <= a);
-        c = a - b;
-    }
-    function mul(uint a, uint b) internal pure returns (uint c) {
-        c = a * b;
-        require(a == 0 || c / a == b);
-    }
-    function div(uint a, uint b) internal pure returns (uint c) {
-        require(b > 0);
-        c = a / b;
-    }
-}
-
-
-// ----------------------------------------------------------------------------
-// ERC Token Standard #20 Interface
-// https://github.com/ethereum/EIPs/blob/master/EIPS/eip-20-token-standard.md
-// ----------------------------------------------------------------------------
-contract ERC20Interface {
-    function totalSupply() public constant returns (uint);
-    function balanceOf(address tokenOwner) public constant returns (uint balance);
-    function allowance(address tokenOwner, address spender) public constant returns (uint remaining);
-    function transfer(address to, uint tokens) public returns (bool success);
-    function approve(address spender, uint tokens) public returns (bool success);
-    function transferFrom(address from, address to, uint tokens) public returns (bool success);
-
-    event Transfer(address indexed from, address indexed to, uint tokens);
-    event Approval(address indexed tokenOwner, address indexed spender, uint tokens);
-}
-
-
-// ----------------------------------------------------------------------------
-// Contract function to receive approval and execute function in one call
-//
-// Borrowed from MiniMeToken
-// ----------------------------------------------------------------------------
-contract ApproveAndCallFallBack {
-    function receiveApproval(address from, uint256 tokens, address token, bytes data) public;
-}
-
-
-// ----------------------------------------------------------------------------
-// Owned contract
-// ----------------------------------------------------------------------------
-contract Owned {
-    address public owner;
-    address public newOwner;
-
-    event OwnershipTransferred(address indexed _from, address indexed _to);
-
-    constructor() public {
-        owner = msg.sender;
-    }
-
-    modifier onlyOwner {
-        require(msg.sender == owner);
-        _;
-    }
-
-    function transferOwnership(address _newOwner) public onlyOwner {
-        newOwner = _newOwner;
-    }
-    function acceptOwnership() public {
-        require(msg.sender == newOwner);
-        emit OwnershipTransferred(owner, newOwner);
-        owner = newOwner;
-        newOwner = address(0);
-    }
-}
-
-/**
- * @title Burnable Token
- * @dev Token that can be irreversibly burned (destroyed).
- */
-contract BurnableToken is ERC20Interface {
-
-    event Burn(address indexed burner, uint256 value);
-
-    /**
-     * @dev Burns a specific amount of tokens.
-     * @param _value The amount of token to be burned.
-     */
-    function burn(uint256 _value) public {
-        _burn(msg.sender, _value);
-    }
-
-    function _burn(address _who, uint256 _value) internal {
-        require(_value <= balances[_who]);
-        // no need to require value <= totalSupply, since that would imply the
-        // sender's balance is greater than the totalSupply, which *should* be an assertion failure
-
-        balances[_who] = balances[_who].sub(_value);
-        totalSupply_ = totalSupply_.sub(_value);
-        emit Burn(_who, _value);
-        emit Transfer(_who, address(0), _value);
-    }
-}
-
+import "../openzepplin/contracts/math/SafeMath.sol";
+import "../openzepplin/contracts/ownership/Ownable.sol";
+import "../openzepplin/contracts/token/ERC20/PausableToken.sol";
+import "../openzepplin/contracts/token/ERC20/CappedToken.sol";
+import "../openzepplin/contracts/token/ERC20/BurnableToken.sol";
 
 // ----------------------------------------------------------------------------
 // ERC20 Token, with the addition of symbol, name and decimals and an
 // initial fixed supply
 // ----------------------------------------------------------------------------
-contract SCUToken is ERC20Interface, Owned, BurnableToken {
-    using SafeMath for uint;
+contract SCU is Ownable, PausableToken, CappedToken, BurnableToken {
 
     string public symbol;
-    string public  name;
+    string public name;
     uint8 public decimals;
-    uint public _totalSupply;
-
-    mapping(address => uint) balances;
-    mapping(address => mapping(address => uint)) allowed;
-
 
     // ------------------------------------------------------------------------
     // Constructor
@@ -147,6 +37,8 @@ contract SCUToken is ERC20Interface, Owned, BurnableToken {
         decimals = 18;
         _totalSupply = 150000000 * 10**uint(decimals);
         balances[owner] = _totalSupply;
+        // Set: CappedToken.cap
+        cap = _totalSupply;
         emit Transfer(address(0), owner, _totalSupply);
     }
 
