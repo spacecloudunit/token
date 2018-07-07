@@ -9,7 +9,7 @@ pragma solidity ^0.4.24;
 // Decimals    : 18
 //
 // (c) openzepplin / Smart Contract Solutions, Inc 2016. The MIT Licence.
-// (c) Max / SCU GmbH 2018. The MIT Licence.
+// (c) C.Sprajc / SCU GmbH 2018. The MIT Licence.
 // ----------------------------------------------------------------------------
 
 /*
@@ -79,8 +79,6 @@ library SafeMath {
 contract Ownable {
     address public owner;
 
-
-    event OwnershipRenounced(address indexed previousOwner);
     event OwnershipTransferred(
         address indexed previousOwner,
         address indexed newOwner
@@ -132,12 +130,11 @@ contract Pausable is Ownable {
 
     bool public paused = false;
 
-
     /**
      * @dev Modifier to make a function callable only when the contract is not paused.
      */
     modifier whenNotPaused() {
-        require(!paused);
+        require(!paused || msg.sender == owner);
         _;
     }
 
@@ -145,14 +142,14 @@ contract Pausable is Ownable {
      * @dev Modifier to make a function callable only when the contract is paused.
      */
     modifier whenPaused() {
-        require(paused);
+        require(paused && msg.sender != owner);
         _;
     }
 
     /**
      * @dev called by the owner to pause, triggers stopped state
      */
-    function pause() onlyOwner whenNotPaused public {
+    function pause() onlyOwner public {
         paused = true;
         emit Pause();
     }
@@ -160,7 +157,7 @@ contract Pausable is Ownable {
     /**
      * @dev called by the owner to unpause, returns to normal state
      */
-    function unpause() onlyOwner whenPaused public {
+    function unpause() onlyOwner public {
         paused = false;
         emit Unpause();
     }
@@ -208,11 +205,15 @@ contract DetailedERC20 is ERC20 {
     string public symbol;
     uint8 public decimals;
 
-    constructor(string _name, string _symbol, uint8 _decimals) public {
+    constructor() public {
+        // Fields have to be set by child constructor
+    }
+
+    /*constructor(string _name, string _symbol, uint8 _decimals) public {
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
-    }
+    }*/
 }
 
 /**
@@ -411,20 +412,6 @@ contract BurnableToken is BasicToken {
  */
 contract MintableToken is StandardToken, Ownable {
     event Mint(address indexed to, uint256 amount);
-    event MintFinished();
-
-    bool public mintingFinished = false;
-
-
-    modifier canMint() {
-        require(!mintingFinished);
-        _;
-    }
-
-    modifier hasMintPermission() {
-        require(msg.sender == owner);
-        _;
-    }
 
     /**
      * @dev Function to mint tokens
@@ -436,8 +423,7 @@ contract MintableToken is StandardToken, Ownable {
         address _to,
         uint256 _amount
     )
-    hasMintPermission
-    canMint
+    onlyOwner
     public
     returns (bool)
     {
@@ -445,16 +431,6 @@ contract MintableToken is StandardToken, Ownable {
         balances[_to] = balances[_to].add(_amount);
         emit Mint(_to, _amount);
         emit Transfer(address(0), _to, _amount);
-        return true;
-    }
-
-    /**
-     * @dev Function to stop minting new tokens.
-     * @return True if the operation was successful.
-     */
-    function finishMinting() onlyOwner canMint public returns (bool) {
-        mintingFinished = true;
-        emit MintFinished();
         return true;
     }
 }
@@ -467,10 +443,16 @@ contract CappedToken is MintableToken {
 
     uint256 public cap;
 
+    constructor() public {
+        // cap is set in child constructor
+    }
+
+    /** cap is set in child constructor
     constructor(uint256 _cap) public {
         require(_cap > 0);
         cap = _cap;
     }
+    */
 
     /**
      * @dev Function to mint tokens
@@ -508,6 +490,7 @@ contract PausableToken is StandardToken, Pausable {
         return super.transfer(_to, _value);
     }
 
+    /** Allow transferFrom even if paused. This is for crowdsale contracts
     function transferFrom(
         address _from,
         address _to,
@@ -519,6 +502,7 @@ contract PausableToken is StandardToken, Pausable {
     {
         return super.transferFrom(_from, _to, _value);
     }
+    */
 
     function approve(
         address _spender,
@@ -565,7 +549,7 @@ contract SCU is StandardToken, DetailedERC20, Ownable, PausableToken, CappedToke
         // BasicToken:
         totalSupply_ = 150000000 * 10**uint(decimals);
         // StandardToken:
-        balances[owner] = totalSupply_;
+        balances[owner] = 0;
         // CappedToken:
         cap = totalSupply_;
         emit Transfer(address(0), owner, totalSupply_);
