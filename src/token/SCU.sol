@@ -552,6 +552,6 @@ contract SCU is StandardToken, DetailedERC20, Ownable, PausableToken, CappedToke
         totalSupply_ = 0;
         // StandardToken:
         balances[owner] = totalSupply_;
-        emit Transfer(address(0), owner, totalSupply_);
+        // emit Transfer(address(0), owner, totalSupply_);
     }
 }
