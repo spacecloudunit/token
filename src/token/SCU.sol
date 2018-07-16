@@ -546,12 +546,12 @@ contract SCU is StandardToken, DetailedERC20, Ownable, PausableToken, CappedToke
         symbol = "SCU";
         name = "Space.Cloud.Unit";
         decimals = 18;
+         // CappedToken:
+        cap = 150000000 * 10**uint(decimals);
         // BasicToken:
-        totalSupply_ = 150000000 * 10**uint(decimals);
+        totalSupply_ = 0;
         // StandardToken:
-        balances[owner] = 0;
-        // CappedToken:
-        cap = totalSupply_;
+        balances[owner] = totalSupply_;
         emit Transfer(address(0), owner, totalSupply_);
     }
 }
