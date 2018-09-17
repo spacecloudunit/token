@@ -19,18 +19,11 @@ pragma solidity ^0.4.21;
 contract Ownable {
     address public owner;
 
-    /** WhiteList users and their phase status */
-    mapping(address => uint8) public whitelist;
-
-    /** operator address */
-    address public opsAddress;
 
     event OwnershipTransferred(
         address indexed previousOwner,
         address indexed newOwner
     );
-    event WhitelistUpdated(address indexed _account, uint8 _phase);
-
 
     /** Modifier to check If the sender is the owner of the contract */
     modifier onlyOwner() {
@@ -79,11 +72,20 @@ contract ERC20 {
 
 contract SimpleSaleTest is Ownable {
 
+    /** WhiteList users and their phase status */
+    mapping(address => uint8) public whitelist;
+
+
+
+
+    /** operator address */
+    address public opsAddress;
     uint256 public totalSold;
     uint public exchangeRate;
     ERC20 public Token;
     address public ETHWallet;
 
+    event WhitelistUpdated(address indexed _account, uint8 _phase);
     event Contribution(address from, uint256 amount);
     event ReleaseTokens(address from, uint256 amount);
 
@@ -182,6 +184,7 @@ contract SimpleSaleTest is Ownable {
      *
      *  @param _account account address to be whitelisted
      *  @param _phase 0: unwhitelisted, 1: whitelisted
+
      *
      *  @return bool address is successfully whitelisted/unwhitelisted.
      */
