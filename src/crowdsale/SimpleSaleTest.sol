@@ -52,32 +52,30 @@ contract SimpleSaleTest is Ownable {
         require(msg.value>0);
         //require(whitelist[msg.sender] == 1);
         require(!crowdsaleClosed);
-
+        require(now <= deadline && now >= start);
           //https://ethereum.stackexchange.com/questions/9256/float-not-allowed-in-solidity-vs-decimal-places-asked-for-token-contract
           //fee falls away
-          if (now <= deadline && now >= start)
+
+          uint256 amount = (((msg.value * 100) * getTokenPrice()) / 100);
+          totalSold += (amount / tokenPrice) * 100;
+
+          //afterwards calculate  pre sale bonusprogramm
+          if(tokenSold < 6000000)
           {
-              uint256 amount = (((msg.value * 100) * getTokenPrice()) / 100);
-              totalSold += (amount / tokenPrice) * 100;
-
-              //afterwards calculate  pre sale bonusprogramm
-              if(tokenSold < 6000000)
-              {
-                  amount = amount + ((amount * 25) / 100);
-              }
-              else if(tokenSold < 12000000)
-              {
-                  amount = amount + ((amount * 15) / 100);
-              }
-              else
-              {
-                  amount = amount + ((amount * 10) / 100);
-              }
-
-              ETHWallet.transfer(msg.value);
-              Token.transferFrom(owner, msg.sender, amount);
-              emit Contribution(msg.sender, amount);
+              amount = amount + ((amount * 25) / 100);
           }
+          else if(tokenSold < 12000000)
+          {
+              amount = amount + ((amount * 15) / 100);
+          }
+          else
+          {
+              amount = amount + ((amount * 10) / 100);
+          }
+
+          ETHWallet.transfer(msg.value);
+          Token.transferFrom(owner, msg.sender, amount);
+          emit Contribution(msg.sender, amount);
     }
 
 
