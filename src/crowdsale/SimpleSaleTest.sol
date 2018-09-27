@@ -78,7 +78,7 @@ contract SimpleSaleTest is Ownable {
 
 
     function getTokenPrice() internal view returns (uint256) {
-        return getEtherInEuroCents() * tokenPrice / 100;
+        return getEtherInEuroCents() / tokenPrice ;
     }
 
     function getEtherInEuroCents() internal view returns (uint256) {
