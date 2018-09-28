@@ -39,7 +39,7 @@ contract SimpleSaleTest is Ownable {
         //need adjusted
         tokenSold = 0; //per contract
         tokenPrice = 20; //eurocents
-        fiat = new FiatContractMock();  // Rinkeby and in-memory
+        fiat = FiatContract(0x2CDe56E5c8235D6360CCbb0c57Ce248Ca9C80909);  // Rinkeby and in-memory
         //https://ethereum.stackexchange.com/questions/34110/compare-dates-in-solidity
         deadline = now + 110 * 1 days;
         start = now; //+ 110 * 1 days;
@@ -54,7 +54,7 @@ contract SimpleSaleTest is Ownable {
           //https://ethereum.stackexchange.com/questions/9256/float-not-allowed-in-solidity-vs-decimal-places-asked-for-token-contract
           //fee falls away
 
-          uint256 amount = (((msg.value * 100) * getTokenPrice()) / 100);
+          uint256 amount = (msg.value / getTokenPrice()) * 1 ether;
           totalSold += (amount / tokenPrice) * 100;
 
           //afterwards calculate  pre sale bonusprogramm
@@ -78,13 +78,12 @@ contract SimpleSaleTest is Ownable {
 
 
     function getTokenPrice() internal view returns (uint256) {
-        return getEtherInEuroCents() / tokenPrice ;
+        return getEtherInEuroCents() * tokenPrice / 100;
     }
 
     function getEtherInEuroCents() internal view returns (uint256) {
-        //return fiat.EUR(0) * 100;
-        // Mocked 1 eth 200 EUR
-        return 200 * 100;
+        return fiat.EUR(0) * 100;
+
     }
 
     function closeCrowdsale() public onlyOwner returns (bool) {
