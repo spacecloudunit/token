@@ -64,12 +64,12 @@ contract SCUTokenCrowdsale is Ownable {
 
     constructor(address eth_wallet, address whitelistcontract) public {
         ETHWallet = eth_wallet;
-        Token = ERC20(0xbd82a3c93b825c1f93202f9dd0a120793e029bad);
+        Token = ERC20(0xBD82A3C93B825c1F93202F9Dd0a120793E029BAD);
         crowdsaleClosed = false;
         white = Whitelist(whitelistcontract);
         tokenSold = 0; // per contract
         tokenPrice = 20; // eurocents
-        fiat = FiatContract(0x8055d0504666e2B6942BeB8D6014c964658Ca591)
+        fiat = FiatContract(0x8055d0504666e2B6942BeB8D6014c964658Ca591);
         //https://ethereum.stackexchange.com/questions/34110/compare-dates-in-solidity
         start = now;
         deadline = now + 80 * 1 days;
@@ -116,7 +116,7 @@ contract SCUTokenCrowdsale is Ownable {
 }
 
 contract Whitelist {
-    function isWhitelisted(address _account) constant returns (bool);
+    function isWhitelisted(address _account) public constant returns (bool);
 
 }
 
