@@ -62,11 +62,11 @@ contract SCUTokenCrowdsale is Ownable {
 
     event Contribution(address from, uint256 amount);
 
-    constructor(address eth_wallet, address whitelistcontract) public {
-        ETHWallet = eth_wallet;
+    constructor() public {
+        ETHWallet = 0x78D97495f7CA56aC3956E847BB75F825834575A4;
         Token = ERC20(0xBD82A3C93B825c1F93202F9Dd0a120793E029BAD);
         crowdsaleClosed = false;
-        white = Whitelist(whitelistcontract);
+        white = Whitelist(0xc0b11003708F9d8896c7676fD129188041B7F60B);
         tokenSold = 0; // per contract
         tokenPrice = 20; // eurocents
         fiat = FiatContract(0x8055d0504666e2B6942BeB8D6014c964658Ca591);
