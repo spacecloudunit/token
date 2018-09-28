@@ -44,7 +44,7 @@ contract Whitelist is Ownable {
 
   event WhitelistUpdated(address indexed _account, uint8 _phase);
 
-  function isWhitelisted(address _account) constant returns (bool) {
+  function isWhitelisted(address _account) public constant returns (bool) {
       return whitelist[_account] == 1;
   }
 
@@ -59,7 +59,7 @@ contract Whitelist is Ownable {
  */
 function updateWhitelist(
     address _account,
-    uint8 _phase)
+    uint8 _phase) public
     returns (bool)
 {
     require(_account != address(0));
