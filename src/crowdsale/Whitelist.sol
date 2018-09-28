@@ -1,8 +1,43 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.4.25;
 
-import "./Ownable.sol";
+/**
+ * @title Ownable
+ * @dev The Ownable contract has an owner address, and provides basic authorization control
+ * functions, this simplifies the implementation of "user permissions".
+ */
+contract Ownable {
+    address public owner;
 
-contract Whitelist is Ownable{
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    /**
+     * @dev The Ownable constructor sets the original `owner` of the contract to the sender
+     * account.
+     */
+    constructor() public {
+        owner = msg.sender;
+    }
+
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
+    /**
+     * @dev Allows the current owner to transfer control of the contract to a newOwner.
+     * @param _newOwner The address to transfer ownership to.
+     */
+    function transferOwnership(address _newOwner) public onlyOwner {
+        require(_newOwner != address(0));
+        emit OwnershipTransferred(owner, _newOwner);
+        owner = _newOwner;
+    }
+}
+
+contract Whitelist is Ownable {
 
   address public opsAddress;
   mapping(address => uint8) public whitelist;
@@ -68,7 +103,7 @@ function updateWhitelist(
       view
       returns (bool)
   {
-      return (opsAddress != address(0) && _address == opsAddress);
+      return (opsAddress != address(0) && _address == opsAddress) || isOwner(_address);
   }
 
   /** External Functions */
