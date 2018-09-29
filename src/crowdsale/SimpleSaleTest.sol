@@ -14,8 +14,6 @@ import "./Ownable.sol";
 
 contract SimpleSaleTest is Ownable {
 
-    uint256 public totalSold; //eurocents
-
     FiatContract public fiat;
     ERC20 public Token;
     address public ETHWallet;
@@ -30,6 +28,7 @@ contract SimpleSaleTest is Ownable {
     bool public crowdsaleClosed;
 
     event Contribution(address from, uint256 amount);
+    event TokenSold(address indexed customer, uint256 amount);
 
     constructor(address eth_wallet, address token_address, address whitelistcontract) public {
         ETHWallet = eth_wallet;
@@ -55,7 +54,6 @@ contract SimpleSaleTest is Ownable {
           //fee falls away
 
           uint256 amount = (msg.value / getTokenPrice()) * 1 ether;
-          totalSold += (amount / tokenPrice) * 100;
 
           //afterwards calculate  pre sale bonusprogramm
           if(tokenSold < 6000000)
@@ -70,6 +68,9 @@ contract SimpleSaleTest is Ownable {
           {
               amount = amount + ((amount * 10) / 100);
           }
+
+          tokenSold = tokenSold + amount;
+          emit TokenSold(msg.sender, amount);
 
           ETHWallet.transfer(msg.value);
           Token.transferFrom(owner, msg.sender, amount);
